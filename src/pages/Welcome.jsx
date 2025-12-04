@@ -4,31 +4,31 @@ import { FaUserCircle, FaUserPlus, FaSignInAlt, FaBolt, FaLock, FaStar } from "r
 
 const Welcome = () => {
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
+    <div style={styles.container} className="welcome-container">
+      <div style={styles.card} className="welcome-card">
         <div style={styles.iconContainer}>
-          <FaUserCircle style={styles.icon} />
+          <FaUserCircle style={styles.icon} className="welcome-icon" />
         </div>
-        <h1 style={styles.heading}>Face Authentication System</h1>
-        <p style={styles.subtitle}>Secure access with facial recognition technology</p>
+        <h1 style={styles.heading} className="welcome-heading">Face Authentication System</h1>
+        <p style={styles.subtitle} className="welcome-subtitle">Secure access with facial recognition technology</p>
 
-        <div style={styles.buttons}>
+        <div style={styles.buttons} className="welcome-buttons">
           <Link to="/register" style={styles.linkWrapper}>
-            <button style={styles.btnPrimary}>
+            <button style={styles.btnPrimary} className="welcome-btn-primary">
               <FaUserPlus style={styles.btnIcon} />
               Register New User
             </button>
           </Link>
 
           <Link to="/login" style={styles.linkWrapper}>
-            <button style={styles.btnSecondary}>
+            <button style={styles.btnSecondary} className="welcome-btn-secondary">
               <FaSignInAlt style={styles.btnIcon} />
               Login
             </button>
           </Link>
         </div>
 
-        <div style={styles.features}>
+        <div style={styles.features} className="welcome-features">
           <div style={styles.feature}>
             <FaBolt style={styles.featureIcon} />
             <span style={styles.featureText}>Fast Recognition</span>
@@ -148,5 +148,54 @@ const styles = {
     fontWeight: "500",
   },
 };
+
+// Add media query styles
+if (typeof window !== 'undefined') {
+  const style = document.createElement('style');
+  style.textContent = `
+    @media (max-width: 768px) {
+      .welcome-card {
+        padding: 40px 30px !important;
+      }
+      .welcome-heading {
+        font-size: 28px !important;
+      }
+      .welcome-icon {
+        font-size: 70px !important;
+      }
+    }
+    @media (max-width: 480px) {
+      .welcome-container {
+        padding: 15px !important;
+      }
+      .welcome-card {
+        padding: 30px 20px !important;
+      }
+      .welcome-heading {
+        font-size: 24px !important;
+      }
+      .welcome-subtitle {
+        font-size: 14px !important;
+      }
+      .welcome-icon {
+        font-size: 60px !important;
+      }
+      .welcome-buttons {
+        flex-direction: column !important;
+        gap: 15px !important;
+      }
+      .welcome-btn-primary,
+      .welcome-btn-secondary {
+        width: 100% !important;
+        justify-content: center !important;
+      }
+      .welcome-features {
+        flex-direction: column !important;
+        gap: 15px !important;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
 
 export default Welcome;

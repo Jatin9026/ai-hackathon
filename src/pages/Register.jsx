@@ -64,13 +64,13 @@ const Register = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <div style={styles.headerIcon}>
+    <div style={styles.container} className="register-container">
+      <div style={styles.card} className="register-card">
+        <div style={styles.headerIcon} className="register-header-icon">
           <FaUserPlus />
         </div>
-        <h2 style={styles.heading}>Register New User</h2>
-        <p style={styles.subtitle}>Create your account with facial recognition</p>
+        <h2 style={styles.heading} className="register-heading">Register New User</h2>
+        <p style={styles.subtitle} className="register-subtitle">Create your account with facial recognition</p>
 
         <div style={styles.inputGroup}>
           <label style={styles.label}>User ID</label>
@@ -84,7 +84,7 @@ const Register = () => {
         </div>
 
         <div style={styles.imageSection}>
-          <div style={styles.webcamContainer}>
+          <div style={styles.webcamContainer} className="register-webcam-container">
             {showWebcam && !capturedImage && (
               <Webcam
                 audio={false}
@@ -102,7 +102,7 @@ const Register = () => {
             )}
           </div>
 
-          <div style={styles.buttonGroup}>
+          <div style={styles.buttonGroup} className="register-button-group">
             <button
               style={styles.btnCapture}
               onClick={capturePhoto}
@@ -230,8 +230,9 @@ const styles = {
     border: "2px solid #e2e8f0",
     borderRadius: "8px",
     outline: "none",
-    transition: "all 0.3s ease",
     boxSizing: "border-box",
+    background: "#ffffff",
+    color: "#000000",
   },
   imageSection: {
     marginBottom: "25px",
@@ -352,5 +353,52 @@ const styles = {
     color: "#742a2a",
   },
 };
+
+// Add media query styles
+if (typeof window !== 'undefined') {
+  const style = document.createElement('style');
+  style.textContent = `
+    @media (max-width: 768px) {
+      .register-container {
+        padding: 20px 10px !important;
+      }
+      .register-card {
+        padding: 30px 20px !important;
+      }
+      .register-heading {
+        font-size: 24px !important;
+      }
+      .register-webcam-container {
+        height: 250px !important;
+      }
+    }
+    @media (max-width: 480px) {
+      .register-card {
+        padding: 25px 15px !important;
+        width: 95% !important;
+      }
+      .register-heading {
+        font-size: 22px !important;
+      }
+      .register-subtitle {
+        font-size: 13px !important;
+      }
+      .register-header-icon {
+        font-size: 35px !important;
+      }
+      .register-webcam-container {
+        height: 200px !important;
+      }
+      .register-button-group {
+        flex-direction: column !important;
+      }
+      .register-button-group button {
+        width: 100% !important;
+        min-width: 100% !important;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
 
 export default Register;

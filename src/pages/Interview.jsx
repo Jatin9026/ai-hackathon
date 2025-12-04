@@ -517,17 +517,11 @@ const styles = {
     display: "flex",
     gap: "20px",
     marginBottom: "20px",
+    flexWrap: "wrap",
   },
   inputGroup: {
     flex: 1,
-  },
-  label: {
-    display: "flex",
-    alignItems: "center",
-    fontSize: "14px",
-    fontWeight: "600",
-    color: "#4a5568",
-    marginBottom: "8px",
+    minWidth: "250px",
   },
   selectTrigger: {
     width: "100%",
@@ -540,7 +534,6 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    transition: "all 0.3s ease",
     boxSizing: "border-box",
   },
   selectDisabled: {
@@ -659,7 +652,6 @@ const styles = {
     cursor: "pointer",
     borderRadius: "8px",
     marginBottom: "8px",
-    transition: "all 0.2s ease",
     background: "#f7fafc",
   },
   modalItemCustom: {
@@ -669,7 +661,6 @@ const styles = {
     cursor: "pointer",
     borderRadius: "8px",
     marginTop: "12px",
-    transition: "all 0.2s ease",
     background: "#e2e8f0",
     fontWeight: "600",
     display: "flex",
@@ -684,6 +675,8 @@ const styles = {
     outline: "none",
     marginBottom: "15px",
     boxSizing: "border-box",
+    background: "#ffffff",
+    color: "#000000",
   },
   modalSubmitBtn: {
     width: "100%",
@@ -718,6 +711,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     gap: "10px",
+    flexWrap: "wrap",
   },
   filterIcon: {
     fontSize: "18px",
@@ -784,7 +778,7 @@ const styles = {
   },
   questionTitle: {
     display: "flex",
-    alignItems: "center",
+    alignItems: "flex-start",
     gap: "15px",
     flex: 1,
   },
@@ -795,17 +789,20 @@ const styles = {
     borderRadius: "6px",
     fontWeight: "700",
     fontSize: "14px",
+    flexShrink: 0,
   },
   questionText: {
     fontSize: "16px",
     fontWeight: "600",
     color: "#2d3748",
     flex: 1,
+    wordBreak: "break-word",
   },
   questionMeta: {
     display: "flex",
     alignItems: "center",
     gap: "15px",
+    flexShrink: 0,
   },
   difficulty: {
     padding: "6px 12px",
@@ -843,5 +840,97 @@ const styles = {
     lineHeight: "1.6",
   },
 };
+
+// Add media query styles
+if (typeof window !== 'undefined') {
+  const style = document.createElement('style');
+  style.textContent = `
+    @media (max-width: 768px) {
+      .interview-card {
+        padding: 30px 20px !important;
+      }
+      .interview-heading {
+        font-size: 28px !important;
+      }
+      .interview-header-icon {
+        font-size: 35px !important;
+      }
+      .interview-input-row {
+        flex-direction: column !important;
+        gap: 15px !important;
+      }
+      .interview-input-group {
+        min-width: 100% !important;
+      }
+      .interview-questions-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+      }
+      .interview-filter-container {
+        width: 100%;
+        justify-content: flex-start !important;
+      }
+      .interview-question-header {
+        flex-direction: column !important;
+        gap: 10px !important;
+        align-items: flex-start !important;
+      }
+      .interview-question-meta {
+        align-self: flex-end;
+      }
+    }
+    @media (max-width: 480px) {
+      .interview-container {
+        padding: 20px 10px !important;
+      }
+      .interview-card {
+        padding: 25px 15px !important;
+        border-radius: 12px !important;
+      }
+      .interview-heading {
+        font-size: 24px !important;
+      }
+      .interview-subtitle {
+        font-size: 14px !important;
+      }
+      .interview-header-icon {
+        font-size: 30px !important;
+      }
+      .interview-form-section {
+        padding: 15px !important;
+      }
+      .interview-questions-heading {
+        font-size: 20px !important;
+      }
+      .interview-filter-btn {
+        padding: 6px 12px !important;
+        font-size: 12px !important;
+      }
+      .interview-filter-icon {
+        font-size: 14px !important;
+      }
+      .interview-question-text {
+        font-size: 14px !important;
+      }
+      .interview-question-number {
+        font-size: 12px !important;
+        padding: 4px 8px !important;
+      }
+      .interview-difficulty {
+        font-size: 11px !important;
+        padding: 4px 8px !important;
+      }
+      .interview-modal {
+        width: 95% !important;
+        max-width: 95% !important;
+      }
+      .interview-modal-small {
+        width: 95% !important;
+        max-width: 95% !important;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
 
 export default Interview;
