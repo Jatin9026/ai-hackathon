@@ -94,6 +94,17 @@ button:focus-visible {
   }
 }
 
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Dropdown scrollbar styling */
 div[style*="overflowY: auto"]::-webkit-scrollbar {
   width: 8px;
@@ -122,5 +133,23 @@ div[style*="overflowY: auto"]::-webkit-scrollbar-thumb:hover {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2em;
+  }
+
+  button {
+    padding: 0.5em 1em;
+    font-size: 0.9em;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.5em;
   }
 }

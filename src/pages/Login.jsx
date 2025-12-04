@@ -75,13 +75,13 @@ const Login = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <div style={styles.headerIcon}>
+    <div style={styles.container} className="login-container">
+      <div style={styles.card} className="login-card">
+        <div style={styles.headerIcon} className="login-header-icon">
           <FaSignInAlt />
         </div>
-        <h2 style={styles.heading}>Login</h2>
-        <p style={styles.subtitle}>Verify your identity with facial recognition</p>
+        <h2 style={styles.heading} className="login-heading">Login</h2>
+        <p style={styles.subtitle} className="login-subtitle">Verify your identity with facial recognition</p>
 
         <div style={styles.inputGroup}>
           <label style={styles.label}>User ID</label>
@@ -95,7 +95,7 @@ const Login = () => {
         </div>
 
         <div style={styles.imageSection}>
-          <div style={styles.webcamContainer}>
+          <div style={styles.webcamContainer} className="login-webcam-container">
             {showWebcam && !capturedImage && (
               <Webcam
                 audio={false}
@@ -113,7 +113,7 @@ const Login = () => {
             )}
           </div>
 
-          <div style={styles.buttonGroup}>
+          <div style={styles.buttonGroup} className="login-button-group">
             <button
               style={styles.btnCapture}
               onClick={capturePhoto}
@@ -241,8 +241,9 @@ const styles = {
     border: "2px solid #e2e8f0",
     borderRadius: "8px",
     outline: "none",
-    transition: "all 0.3s ease",
     boxSizing: "border-box",
+    background: "#ffffff",
+    color: "#000000",
   },
   imageSection: {
     marginBottom: "25px",
@@ -274,9 +275,11 @@ const styles = {
     display: "flex",
     gap: "12px",
     marginBottom: "15px",
+    flexWrap: "wrap",
   },
   btnCapture: {
     flex: 1,
+    minWidth: "120px",
     padding: "12px 20px",
     background: "#48bb78",
     color: "#fff",
@@ -293,6 +296,7 @@ const styles = {
   },
   btnUpload: {
     flex: 1,
+    minWidth: "120px",
     padding: "12px 20px",
     background: "#4299e1",
     color: "#fff",
@@ -363,5 +367,52 @@ const styles = {
     color: "#742a2a",
   },
 };
+
+// Add media query styles
+if (typeof window !== 'undefined') {
+  const style = document.createElement('style');
+  style.textContent = `
+    @media (max-width: 768px) {
+      .login-container {
+        padding: 20px 10px !important;
+      }
+      .login-card {
+        padding: 30px 20px !important;
+      }
+      .login-heading {
+        font-size: 24px !important;
+      }
+      .login-webcam-container {
+        height: 250px !important;
+      }
+    }
+    @media (max-width: 480px) {
+      .login-card {
+        padding: 25px 15px !important;
+        width: 95% !important;
+      }
+      .login-heading {
+        font-size: 22px !important;
+      }
+      .login-subtitle {
+        font-size: 13px !important;
+      }
+      .login-header-icon {
+        font-size: 35px !important;
+      }
+      .login-webcam-container {
+        height: 200px !important;
+      }
+      .login-button-group {
+        flex-direction: column !important;
+      }
+      .login-button-group button {
+        width: 100% !important;
+        min-width: 100% !important;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
 
 export default Login;
