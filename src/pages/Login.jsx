@@ -4,11 +4,13 @@ import axios from "axios";
 import { API_BASE_URL } from "../api";
 import { useNavigate } from "react-router-dom";
 import { FaSignInAlt, FaCamera, FaUpload, FaRedo, FaCheckCircle, FaExclamationTriangle, FaTimesCircle } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const webcamRef = useRef(null);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [userId, setUserId] = useState("");
   const [capturedImage, setCapturedImage] = useState(null);
@@ -53,9 +55,10 @@ const Login = () => {
       });
 
       if (res.data.match === true) {
+        login(userId);
         setStatus("✅ ACCESS GRANTED - Redirecting...");
         setTimeout(() => {
-          navigate("/welcome");
+          navigate("/interview");
         }, 1500);
       } else {
         setStatus("❌ ACCESS DENIED - Face not recognized");

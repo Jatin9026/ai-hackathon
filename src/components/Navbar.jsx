@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
-import { FaUserShield } from "react-icons/fa";
+import { FaUserShield, FaSignOutAlt } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
+  const { isAuthenticated, currentUser, logout } = useAuth();
+
   return (
     <nav style={styles.nav}>
       <div style={styles.container}>
@@ -11,8 +14,20 @@ const Navbar = () => {
         </div>
         <div style={styles.links}>
           <Link style={styles.link} to="/">Home</Link>
-          <Link style={styles.link} to="/register">Register</Link>
-          <Link style={styles.link} to="/login">Login</Link>
+          {!isAuthenticated ? (
+            <>
+              <Link style={styles.link} to="/register">Register</Link>
+              <Link style={styles.link} to="/login">Login</Link>
+            </>
+          ) : (
+            <>
+              <Link style={styles.link} to="/interview">Interview Prep</Link>
+              <button onClick={logout} style={styles.logoutBtn}>
+                <FaSignOutAlt style={{ marginRight: "5px" }} />
+                Logout ({currentUser})
+              </button>
+            </>
+          )}
         </div>
       </div>
     </nav>
@@ -61,6 +76,19 @@ const styles = {
     fontWeight: "600",
     transition: "color 0.3s ease",
     position: "relative",
+  },
+  logoutBtn: {
+    padding: "8px 16px",
+    background: "#4a5568",
+    color: "#fff",
+    border: "none",
+    borderRadius: "6px",
+    fontSize: "14px",
+    fontWeight: "600",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    transition: "all 0.3s ease",
   },
 };
 

@@ -65,6 +65,53 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Dropdown scrollbar styling */
+div[style*="overflowY: auto"]::-webkit-scrollbar {
+  width: 8px;
+}
+
+div[style*="overflowY: auto"]::-webkit-scrollbar-track {
+  background: #f7fafc;
+}
+
+div[style*="overflowY: auto"]::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+
+div[style*="overflowY: auto"]::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
