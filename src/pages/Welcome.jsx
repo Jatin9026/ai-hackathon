@@ -1,201 +1,118 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaUserCircle, FaUserPlus, FaSignInAlt, FaBolt, FaLock, FaStar } from "react-icons/fa";
+import {
+  Box,
+  Container,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Grid,
+  Stack,
+  Fade,
+} from "@mui/material";
+import {
+  PersonAdd,
+  Login,
+  Bolt,
+  Lock,
+  Star,
+  Shield,
+} from "@mui/icons-material";
 
 const Welcome = () => {
   return (
-    <div style={styles.container} className="welcome-container">
-      <div style={styles.card} className="welcome-card">
-        <div style={styles.iconContainer}>
-          <FaUserCircle style={styles.icon} className="welcome-icon" />
-        </div>
-        <h1 style={styles.heading} className="welcome-heading">Face Authentication System</h1>
-        <p style={styles.subtitle} className="welcome-subtitle">Secure access with facial recognition technology</p>
+    <Box sx={{ minHeight: 'calc(100vh - 64px)', bgcolor: '#000000', py: 6, px: 2 }}>
+      <Container maxWidth="lg">
+        <Fade in timeout={800}>
+          <Card elevation={0}>
+            <CardContent sx={{ p: { xs: 4, md: 8 } }}>
+              <Box sx={{ textAlign: 'center', mb: 4 }}>
+                <Box
+                  sx={{
+                    width: 100,
+                    height: 100,
+                    borderRadius: 5,
+                    background: '#1a1a1a',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mx: 'auto',
+                    mb: 3,
+                  }}
+                >
+                  <Shield sx={{ fontSize: 50, color: '#ffffff' }} />
+                </Box>
 
-        <div style={styles.buttons} className="welcome-buttons">
-          <Link to="/register" style={styles.linkWrapper}>
-            <button style={styles.btnPrimary} className="welcome-btn-primary">
-              <FaUserPlus style={styles.btnIcon} />
-              Register New User
-            </button>
-          </Link>
+                <Typography variant="h1" sx={{ textAlign: 'center', mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>
+                  Face Authentication System
+                </Typography>
 
-          <Link to="/login" style={styles.linkWrapper}>
-            <button style={styles.btnSecondary} className="welcome-btn-secondary">
-              <FaSignInAlt style={styles.btnIcon} />
-              Login
-            </button>
-          </Link>
-        </div>
+                <Typography variant="body1" sx={{ textAlign: 'center', color: 'text.secondary', mb: 5, maxWidth: 600, mx: 'auto' }}>
+                  Secure access with cutting-edge facial recognition technology.
+                  <br />
+                  Experience seamless authentication in milliseconds.
+                </Typography>
 
-        <div style={styles.features} className="welcome-features">
-          <div style={styles.feature}>
-            <FaBolt style={styles.featureIcon} />
-            <span style={styles.featureText}>Fast Recognition</span>
-          </div>
-          <div style={styles.feature}>
-            <FaLock style={styles.featureIcon} />
-            <span style={styles.featureText}>Secure Authentication</span>
-          </div>
-          <div style={styles.feature}>
-            <FaStar style={styles.featureIcon} />
-            <span style={styles.featureText}>Easy to Use</span>
-          </div>
-        </div>
-      </div>
-    </div>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} justifyContent="center" sx={{ mb: 5 }}>
+                  <Button component={Link} to="/register" variant="contained" size="large" startIcon={<PersonAdd />} sx={{ px: 4, py: 1.5, fontSize: '1.1rem' }}>
+                    Register New User
+                  </Button>
+                  <Button component={Link} to="/login" variant="outlined" size="large" startIcon={<Login />} sx={{ px: 4, py: 1.5, fontSize: '1.1rem' }}>
+                    Login
+                  </Button>
+                </Stack>
+              </Box>
+            </CardContent>
+          </Card>
+        </Fade>
+
+        <Box sx={{ mt: 6 }}>
+          <Typography variant="h2" sx={{ textAlign: 'center', mb: 6, fontSize: { xs: '1.75rem', md: '2.5rem' } }}>
+            Why Choose Our Platform?
+          </Typography>
+
+          <Grid container spacing={4}>
+            <Grid item xs={12} md={4}>
+              <Card sx={{ height: '100%', transition: 'all 0.3s ease', '&:hover': { transform: 'translateY(-8px)' } }}>
+                <CardContent sx={{ p: 4, textAlign: 'center' }}>
+                  <Box sx={{ width: 80, height: 80, borderRadius: 5, background: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 3 }}>
+                    <Bolt sx={{ fontSize: 40, color: '#ffffff' }} />
+                  </Box>
+                  <Typography variant="h6" gutterBottom>Fast Recognition</Typography>
+                  <Typography variant="body2" color="text.secondary">Authenticate in under 2 seconds with our advanced AI algorithms</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            <Grid item xs={12} md={4}>
+              <Card sx={{ height: '100%', transition: 'all 0.3s ease', '&:hover': { transform: 'translateY(-8px)' } }}>
+                <CardContent sx={{ p: 4, textAlign: 'center' }}>
+                  <Box sx={{ width: 80, height: 80, borderRadius: 5, background: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 3 }}>
+                    <Lock sx={{ fontSize: 40, color: '#ffffff' }} />
+                  </Box>
+                  <Typography variant="h6" gutterBottom>Secure Authentication</Typography>
+                  <Typography variant="body2" color="text.secondary">Military-grade encryption protects your biometric data 24/7</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            <Grid item xs={12} md={4}>
+              <Card sx={{ height: '100%', transition: 'all 0.3s ease', '&:hover': { transform: 'translateY(-8px)' } }}>
+                <CardContent sx={{ p: 4, textAlign: 'center' }}>
+                  <Box sx={{ width: 80, height: 80, borderRadius: 5, background: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 3 }}>
+                    <Star sx={{ fontSize: 40, color: '#ffffff' }} />
+                  </Box>
+                  <Typography variant="h6" gutterBottom>Easy to Use</Typography>
+                  <Typography variant="body2" color="text.secondary">Intuitive interface designed for seamless user experience</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </Box>
+      </Container>
+    </Box>
   );
 };
-
-const styles = {
-  container: {
-    minHeight: "calc(100vh - 100px)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    background: "#f0f4f8",
-    padding: "20px",
-  },
-  card: {
-    background: "#ffffff",
-    borderRadius: "16px",
-    padding: "50px 40px",
-    maxWidth: "600px",
-    width: "100%",
-    boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
-    textAlign: "center",
-    border: "1px solid #e2e8f0",
-  },
-  iconContainer: {
-    marginBottom: "20px",
-  },
-  icon: {
-    fontSize: "80px",
-    color: "#4a5568",
-  },
-  heading: {
-    fontSize: "32px",
-    fontWeight: "700",
-    color: "#2d3748",
-    marginBottom: "10px",
-  },
-  subtitle: {
-    fontSize: "16px",
-    color: "#718096",
-    marginBottom: "40px",
-  },
-  buttons: {
-    display: "flex",
-    gap: "20px",
-    justifyContent: "center",
-    marginBottom: "40px",
-    flexWrap: "wrap",
-  },
-  linkWrapper: {
-    textDecoration: "none",
-  },
-  btnPrimary: {
-    padding: "15px 35px",
-    background: "#4a5568",
-    color: "#fff",
-    border: "none",
-    borderRadius: "10px",
-    fontSize: "16px",
-    fontWeight: "600",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    boxShadow: "0 4px 12px rgba(74, 85, 104, 0.3)",
-  },
-  btnSecondary: {
-    padding: "15px 35px",
-    background: "#ffffff",
-    color: "#4a5568",
-    border: "2px solid #4a5568",
-    borderRadius: "10px",
-    fontSize: "16px",
-    fontWeight: "600",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-  },
-  btnIcon: {
-    fontSize: "18px",
-  },
-  features: {
-    display: "flex",
-    justifyContent: "space-around",
-    gap: "20px",
-    flexWrap: "wrap",
-  },
-  feature: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: "8px",
-  },
-  featureIcon: {
-    fontSize: "28px",
-    color: "#4a5568",
-  },
-  featureText: {
-    fontSize: "14px",
-    color: "#4a5568",
-    fontWeight: "500",
-  },
-};
-
-// Add media query styles
-if (typeof window !== 'undefined') {
-  const style = document.createElement('style');
-  style.textContent = `
-    @media (max-width: 768px) {
-      .welcome-card {
-        padding: 40px 30px !important;
-      }
-      .welcome-heading {
-        font-size: 28px !important;
-      }
-      .welcome-icon {
-        font-size: 70px !important;
-      }
-    }
-    @media (max-width: 480px) {
-      .welcome-container {
-        padding: 15px !important;
-      }
-      .welcome-card {
-        padding: 30px 20px !important;
-      }
-      .welcome-heading {
-        font-size: 24px !important;
-      }
-      .welcome-subtitle {
-        font-size: 14px !important;
-      }
-      .welcome-icon {
-        font-size: 60px !important;
-      }
-      .welcome-buttons {
-        flex-direction: column !important;
-        gap: 15px !important;
-      }
-      .welcome-btn-primary,
-      .welcome-btn-secondary {
-        width: 100% !important;
-        justify-content: center !important;
-      }
-      .welcome-features {
-        flex-direction: column !important;
-        gap: 15px !important;
-      }
-    }
-  `;
-  document.head.appendChild(style);
-}
 
 export default Welcome;

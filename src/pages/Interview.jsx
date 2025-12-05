@@ -2,7 +2,44 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { FaBriefcase, FaSpinner, FaQuestionCircle, FaLightbulb, FaArrowRight, FaChevronDown, FaChevronUp, FaBuilding, FaUserTie, FaTimes, FaEdit, FaFilter } from "react-icons/fa";
+import {
+  Box,
+  Container,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  List,
+  ListItemButton,
+  ListItemText,
+  TextField,
+  Alert,
+  CircularProgress,
+  Collapse,
+  IconButton,
+  Paper,
+  Stack,
+  Fade,
+  ToggleButton,
+  ToggleButtonGroup,
+} from "@mui/material";
+import {
+  Work,
+  Business,
+  Person,
+  Close,
+  ExpandMore,
+  ExpandLess,
+  Lightbulb,
+  Help,
+  ArrowForward,
+  FilterList,
+  Edit,
+} from "@mui/icons-material";
 
 const COMPANIES = [
   { name: "Amazon", roles: ["SDE-1", "SDE-2", "SDE-3", "Senior SDE", "Principal Engineer"] },
@@ -118,13 +155,13 @@ const Interview = () => {
   const getDifficultyColor = (difficulty) => {
     switch (difficulty.toLowerCase()) {
       case "easy":
-        return "#48bb78";
+        return "success";
       case "medium":
-        return "#ed8936";
+        return "warning";
       case "hard":
-        return "#f56565";
+        return "error";
       default:
-        return "#4a5568";
+        return "default";
     }
   };
 
@@ -141,796 +178,566 @@ const Interview = () => {
     : questions.filter(q => q.difficulty.toLowerCase() === difficultyFilter);
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <div style={styles.header}>
-          <FaBriefcase style={styles.headerIcon} />
-          <h1 style={styles.heading}>Interview Preparation</h1>
-          <p style={styles.subtitle}>
-            Welcome, <strong>{currentUser}</strong>! Prepare for your upcoming interviews
-          </p>
-        </div>
+    <Box sx={{ minHeight: 'calc(100vh - 64px)', bgcolor: '#000000', py: 6, position: 'relative' }}>
+      {/* Background accent */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '600px',
+          height: '600px',
+          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%)',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      />
 
-        <div style={styles.formSection}>
-          <div style={styles.inputRow}>
-            {/* Company Selector */}
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>
-                <FaBuilding style={{ marginRight: "5px" }} />
-                Company
-              </label>
-              <div
-                style={styles.selectTrigger}
-                onClick={() => setShowCompanyModal(true)}
-              >
-                <span style={company ? styles.selectedText : styles.placeholderText}>
-                  {company || "Select a company"}
-                </span>
-                <FaChevronDown style={styles.selectIcon} />
-              </div>
-            </div>
-
-            {/* Role Selector */}
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>
-                <FaUserTie style={{ marginRight: "5px" }} />
-                Role
-              </label>
-              <div
-                style={{
-                  ...styles.selectTrigger,
-                  ...((!availableRoles.length && !company) ? styles.selectDisabled : {})
-                }}
-                onClick={() => {
-                  if (availableRoles.length > 0 || company) {
-                    setShowRoleModal(true);
-                  }
+      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+        <Fade in timeout={500}>
+          <Box>
+            {/* Header Section */}
+            <Box sx={{ textAlign: 'center', mb: 6 }}>
+              <Box
+                sx={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  mb: 3,
+                  border: '2px solid #333',
+                  boxShadow: '0 8px 32px rgba(255, 255, 255, 0.05)',
                 }}
               >
-                <span style={role ? styles.selectedText : styles.placeholderText}>
-                  {role || (!company ? "Select company first" : "Select a role")}
-                </span>
-                <FaChevronDown style={styles.selectIcon} />
-              </div>
-            </div>
-          </div>
+                <Work sx={{ fontSize: 50, color: '#ffffff' }} />
+              </Box>
+              <Typography variant="h2" gutterBottom sx={{ fontWeight: 900, letterSpacing: '-0.02em' }}>
+                Interview Preparation
+              </Typography>
+              <Typography variant="body1" color="text.secondary" sx={{ fontSize: '1.1rem' }}>
+                Welcome, <Box component="span" sx={{ color: '#ffffff', fontWeight: 700 }}>{currentUser}</Box>! Master your upcoming interviews
+              </Typography>
+            </Box>
 
-          <button
-            style={{
-              ...styles.btnFetch,
-              ...(loading || !company || !role ? styles.btnDisabled : {}),
-            }}
-            onClick={fetchQuestions}
-            disabled={loading || !company || !role}
-          >
-            {loading ? (
-              <>
-                <FaSpinner style={styles.spinner} />
-                Loading Questions...
-              </>
-            ) : (
-              <>
-                <FaQuestionCircle style={styles.btnIcon} />
-                Get Interview Questions
-              </>
+            {/* Selection Card */}
+            <Card 
+              elevation={0} 
+              sx={{ 
+                mb: 4,
+                background: 'linear-gradient(135deg, #0a0a0a 0%, #151515 100%)',
+                border: '1px solid #222',
+                overflow: 'hidden',
+                position: 'relative',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  background: 'linear-gradient(90deg, #ffffff 0%, #666 50%, #ffffff 100%)',
+                }
+              }}
+            >
+              <CardContent sx={{ p: { xs: 3, md: 4 } }}>
+                <Typography variant="h6" sx={{ mb: 3, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Box sx={{ width: 4, height: 24, bgcolor: '#ffffff', borderRadius: 1 }} />
+                  Interview Configuration
+                </Typography>
+
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 3 }}>
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    startIcon={<Business />}
+                    onClick={() => setShowCompanyModal(true)}
+                    sx={{
+                      py: 2,
+                      justifyContent: 'flex-start',
+                      borderColor: company ? '#ffffff' : '#333',
+                      borderWidth: 2,
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      textTransform: 'none',
+                      '&:hover': {
+                        borderColor: '#ffffff',
+                        borderWidth: 2,
+                        bgcolor: 'rgba(255, 255, 255, 0.05)',
+                      }
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1 }}>
+                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem', mb: 0.5 }}>
+                        COMPANY
+                      </Typography>
+                      <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                        {company || "Select Company"}
+                      </Typography>
+                    </Box>
+                  </Button>
+
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    startIcon={<Person />}
+                    onClick={() => {
+                      if (availableRoles.length > 0 || company) {
+                        setShowRoleModal(true);
+                      }
+                    }}
+                    disabled={!company}
+                    sx={{
+                      py: 2,
+                      justifyContent: 'flex-start',
+                      borderColor: role ? '#ffffff' : '#333',
+                      borderWidth: 2,
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      textTransform: 'none',
+                      '&:hover': {
+                        borderColor: '#ffffff',
+                        borderWidth: 2,
+                        bgcolor: 'rgba(255, 255, 255, 0.05)',
+                      }
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1 }}>
+                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem', mb: 0.5 }}>
+                        ROLE
+                      </Typography>
+                      <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                        {role || (!company ? "Select company first" : "Select Role")}
+                      </Typography>
+                    </Box>
+                  </Button>
+                </Stack>
+
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  startIcon={loading ? <CircularProgress size={20} sx={{ color: '#000' }} /> : <Help />}
+                  onClick={fetchQuestions}
+                  disabled={loading || !company || !role}
+                  sx={{
+                    py: 2,
+                    fontSize: '1.1rem',
+                    fontWeight: 700,
+                    textTransform: 'none',
+                    boxShadow: '0 8px 24px rgba(255, 255, 255, 0.2)',
+                    '&:hover': {
+                      boxShadow: '0 12px 32px rgba(255, 255, 255, 0.3)',
+                      transform: 'translateY(-2px)',
+                    },
+                    transition: 'all 0.3s ease',
+                  }}
+                >
+                  {loading ? "Generating Questions..." : "Get Interview Questions"}
+                </Button>
+              </CardContent>
+            </Card>
+
+            {error && (
+              <Alert 
+                severity="error" 
+                sx={{ 
+                  mb: 3,
+                  bgcolor: 'rgba(245, 101, 101, 0.1)',
+                  border: '1px solid rgba(245, 101, 101, 0.3)',
+                  '& .MuiAlert-icon': { color: '#f56565' }
+                }}
+              >
+                {error}
+              </Alert>
             )}
-          </button>
-        </div>
 
-        {error && <div style={styles.error}>{error}</div>}
+            {questions.length > 0 && (
+              <Box>
+                <Box sx={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center', 
+                  mb: 4, 
+                  flexWrap: 'wrap', 
+                  gap: 2,
+                  p: 3,
+                  bgcolor: '#0a0a0a',
+                  borderRadius: 3,
+                  border: '1px solid #222'
+                }}>
+                  <Box>
+                    <Typography variant="h5" fontWeight={800} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box sx={{ width: 4, height: 28, bgcolor: '#ffffff', borderRadius: 1 }} />
+                      Interview Questions
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, ml: 2.5 }}>
+                      {filteredQuestions.length} questions ready for practice
+                    </Typography>
+                  </Box>
 
-        {questions.length > 0 && (
-          <div style={styles.questionsContainer}>
-            <div style={styles.questionsHeaderRow}>
-              <h2 style={styles.questionsHeading}>
-                Interview Questions ({filteredQuestions.length})
-              </h2>
-              <div style={styles.filterContainer}>
-                <FaFilter style={styles.filterIcon} />
-                <button
-                  style={{
-                    ...styles.filterBtn,
-                    ...(difficultyFilter === 'easy' ? styles.filterBtnActiveEasy : {})
-                  }}
-                  onClick={() => toggleDifficultyFilter('easy')}
-                >
-                  Easy
-                </button>
-                <button
-                  style={{
-                    ...styles.filterBtn,
-                    ...(difficultyFilter === 'medium' ? styles.filterBtnActiveMedium : {})
-                  }}
-                  onClick={() => toggleDifficultyFilter('medium')}
-                >
-                  Medium
-                </button>
-                <button
-                  style={{
-                    ...styles.filterBtn,
-                    ...(difficultyFilter === 'hard' ? styles.filterBtnActiveHard : {})
-                  }}
-                  onClick={() => toggleDifficultyFilter('hard')}
-                >
-                  Hard
-                </button>
-              </div>
-            </div>
-            {filteredQuestions.map((q, index) => (
-              <div key={index} style={styles.questionCard}>
-                <div
-                  style={styles.questionHeader}
-                  onClick={() => toggleExpanded(index)}
-                >
-                  <div style={styles.questionTitle}>
-                    <span style={styles.questionNumber}>Q{index + 1}</span>
-                    <span style={styles.questionText}>{q.question}</span>
-                  </div>
-                  <div style={styles.questionMeta}>
-                    <span
-                      style={{
-                        ...styles.difficulty,
-                        backgroundColor: getDifficultyColor(q.difficulty) + "20",
-                        color: getDifficultyColor(q.difficulty),
+                  <Stack direction="row" spacing={1} alignItems="center" sx={{ flexWrap: 'wrap', gap: 1 }}>
+                    <FilterList sx={{ color: 'text.secondary', fontSize: 20 }} />
+                    <ToggleButtonGroup
+                      value={difficultyFilter}
+                      exclusive
+                      onChange={(e, newValue) => setDifficultyFilter(newValue || "")}
+                      size="small"
+                      sx={{
+                        gap: 1,
+                        '& .MuiToggleButton-root': {
+                          border: '2px solid #333',
+                          borderRadius: 2,
+                          px: 2,
+                          py: 0.5,
+                          textTransform: 'none',
+                          fontWeight: 700,
+                          fontSize: '0.875rem',
+                          '&.Mui-selected': {
+                            borderWidth: 2,
+                          }
+                        }
                       }}
                     >
-                      {q.difficulty}
-                    </span>
-                    {expandedIndex === index ? (
-                      <FaChevronUp style={styles.chevron} />
-                    ) : (
-                      <FaChevronDown style={styles.chevron} />
-                    )}
-                  </div>
-                </div>
+                      <ToggleButton value="easy" color="success">
+                        Easy
+                      </ToggleButton>
+                      <ToggleButton value="medium" color="warning">
+                        Medium
+                      </ToggleButton>
+                      <ToggleButton value="hard" color="error">
+                        Hard
+                      </ToggleButton>
+                    </ToggleButtonGroup>
+                  </Stack>
+                </Box>
 
-                {expandedIndex === index && (
-                  <div style={styles.questionDetails}>
-                    <div style={styles.detailSection}>
-                      <div style={styles.detailLabel}>
-                        <FaLightbulb style={styles.detailIcon} />
-                        Ideal Answer
-                      </div>
-                      <p style={styles.detailText}>{q.ideal_answer}</p>
-                    </div>
+                <Stack spacing={2}>
+                  {filteredQuestions.map((q, index) => (
+                    <Card 
+                      key={index} 
+                      elevation={0} 
+                      sx={{ 
+                        border: '2px solid #222',
+                        bgcolor: '#0a0a0a',
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          borderColor: '#444',
+                          transform: 'translateY(-2px)',
+                          boxShadow: '0 8px 24px rgba(255, 255, 255, 0.05)',
+                        }
+                      }}
+                    >
+                      <CardContent
+                        sx={{ cursor: 'pointer', p: 3 }}
+                        onClick={() => toggleExpanded(index)}
+                      >
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 2 }}>
+                          <Box sx={{ display: 'flex', gap: 2, flex: 1, alignItems: 'flex-start' }}>
+                            <Chip
+                              label={`Q${index + 1}`}
+                              sx={{
+                                bgcolor: '#1a1a1a',
+                                color: '#ffffff',
+                                fontWeight: 800,
+                                fontSize: '0.875rem',
+                                border: '1px solid #333',
+                                height: 32,
+                                minWidth: 48,
+                              }}
+                            />
+                            <Typography variant="body1" fontWeight={600} sx={{ flex: 1, fontSize: '1.05rem', lineHeight: 1.6 }}>
+                              {q.question}
+                            </Typography>
+                          </Box>
 
-                    <div style={styles.detailSection}>
-                      <div style={styles.detailLabel}>
-                        <FaQuestionCircle style={styles.detailIcon} />
-                        Explanation
-                      </div>
-                      <p style={styles.detailText}>{q.explanation}</p>
-                    </div>
+                          <Stack direction="row" spacing={1} alignItems="center">
+                            <Chip
+                              label={q.difficulty}
+                              color={getDifficultyColor(q.difficulty)}
+                              size="small"
+                              sx={{
+                                fontWeight: 700,
+                                textTransform: 'uppercase',
+                                fontSize: '0.75rem',
+                                letterSpacing: '0.05em',
+                              }}
+                            />
+                            <IconButton 
+                              size="small"
+                              sx={{
+                                bgcolor: '#1a1a1a',
+                                border: '1px solid #333',
+                                '&:hover': { bgcolor: '#222' }
+                              }}
+                            >
+                              {expandedIndex === index ? <ExpandLess /> : <ExpandMore />}
+                            </IconButton>
+                          </Stack>
+                        </Box>
 
-                    {q.follow_up && (
-                      <div style={styles.detailSection}>
-                        <div style={styles.detailLabel}>
-                          <FaArrowRight style={styles.detailIcon} />
-                          Follow-up Question
-                        </div>
-                        <p style={styles.detailText}>{q.follow_up}</p>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
-            {filteredQuestions.length === 0 && (
-              <div style={styles.noResults}>
-                <FaQuestionCircle style={styles.noResultsIcon} />
-                <p style={styles.noResultsText}>No questions match the selected difficulty filter.</p>
-              </div>
+                        <Collapse in={expandedIndex === index}>
+                          <Box sx={{ mt: 3, pt: 3, borderTop: '2px solid #1a1a1a' }}>
+                            <Stack spacing={3}>
+                              <Paper elevation={0} sx={{ p: 2.5, bgcolor: '#050505', border: '1px solid #1a1a1a', borderRadius: 2 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
+                                  <Box sx={{ p: 1, bgcolor: 'rgba(237, 137, 54, 0.1)', borderRadius: 1.5 }}>
+                                    <Lightbulb sx={{ color: '#ed8936', fontSize: 20 }} />
+                                  </Box>
+                                  <Typography variant="subtitle2" fontWeight={800} sx={{ fontSize: '0.95rem' }}>
+                                    Ideal Answer
+                                  </Typography>
+                                </Box>
+                                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7, pl: 5.5 }}>
+                                  {q.ideal_answer}
+                                </Typography>
+                              </Paper>
+
+                              <Paper elevation={0} sx={{ p: 2.5, bgcolor: '#050505', border: '1px solid #1a1a1a', borderRadius: 2 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
+                                  <Box sx={{ p: 1, bgcolor: 'rgba(255, 255, 255, 0.05)', borderRadius: 1.5 }}>
+                                    <Help sx={{ color: '#ffffff', fontSize: 20 }} />
+                                  </Box>
+                                  <Typography variant="subtitle2" fontWeight={800} sx={{ fontSize: '0.95rem' }}>
+                                    Explanation
+                                  </Typography>
+                                </Box>
+                                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7, pl: 5.5 }}>
+                                  {q.explanation}
+                                </Typography>
+                              </Paper>
+
+                              {q.follow_up && (
+                                <Paper elevation={0} sx={{ p: 2.5, bgcolor: '#050505', border: '1px solid #1a1a1a', borderRadius: 2 }}>
+                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
+                                    <Box sx={{ p: 1, bgcolor: 'rgba(255, 255, 255, 0.05)', borderRadius: 1.5 }}>
+                                      <ArrowForward sx={{ color: '#ffffff', fontSize: 20 }} />
+                                    </Box>
+                                    <Typography variant="subtitle2" fontWeight={800} sx={{ fontSize: '0.95rem' }}>
+                                      Follow-up Question
+                                    </Typography>
+                                  </Box>
+                                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7, pl: 5.5 }}>
+                                    {q.follow_up}
+                                  </Typography>
+                                </Paper>
+                              )}
+                            </Stack>
+                          </Box>
+                        </Collapse>
+                      </CardContent>
+                    </Card>
+                  ))}
+
+                  {filteredQuestions.length === 0 && (
+                    <Paper 
+                      sx={{ 
+                        p: 8, 
+                        textAlign: 'center', 
+                        bgcolor: '#0a0a0a', 
+                        border: '2px dashed #222',
+                        borderRadius: 3
+                      }}
+                    >
+                      <Help sx={{ fontSize: 64, color: '#333', mb: 2 }} />
+                      <Typography variant="h6" fontWeight={700} sx={{ mb: 1 }}>
+                        No Questions Found
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Try adjusting your difficulty filter
+                      </Typography>
+                    </Paper>
+                  )}
+                </Stack>
+              </Box>
             )}
-          </div>
-        )}
-      </div>
+          </Box>
+        </Fade>
 
-      {/* Company Modal */}
-      {showCompanyModal && (
-        <div style={styles.modalOverlay} onClick={() => setShowCompanyModal(false)}>
-          <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <div style={styles.modalHeader}>
-              <h3 style={styles.modalTitle}>
-                <FaBuilding style={{ marginRight: "10px" }} />
-                Select Company
-              </h3>
-              <FaTimes
-                style={styles.modalClose}
-                onClick={() => setShowCompanyModal(false)}
-              />
-            </div>
-            <div style={styles.modalContent}>
+        {/* Modals remain the same */}
+        <Dialog open={showCompanyModal} onClose={() => setShowCompanyModal(false)} maxWidth="sm" fullWidth>
+          <DialogTitle>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Business />
+                <Typography variant="h6">Select Company</Typography>
+              </Box>
+              <IconButton onClick={() => setShowCompanyModal(false)}>
+                <Close />
+              </IconButton>
+            </Box>
+          </DialogTitle>
+          <DialogContent>
+            <List>
               {COMPANIES.map((comp, idx) => (
-                <div
+                <ListItemButton
                   key={idx}
-                  style={styles.modalItem}
-                  onClick={() => handleCompanySelect(comp.name)}
+                  onClick={() => {
+                    if (comp.name === "Other (Custom)") {
+                      setIsCustomCompany(true);
+                      setCustomCompanyInput("");
+                      setShowCompanyModal(false);
+                    } else {
+                      setIsCustomCompany(false);
+                      setCompany(comp.name);
+                      const selectedCompany = COMPANIES.find(c => c.name === comp.name);
+                      setAvailableRoles(selectedCompany ? selectedCompany.roles : []);
+                      setRole("");
+                      setShowCompanyModal(false);
+                    }
+                  }}
+                  sx={{ borderRadius: 2, mb: 1 }}
                 >
-                  {comp.name}
-                </div>
+                  <ListItemText primary={comp.name} />
+                </ListItemButton>
               ))}
-            </div>
-          </div>
-        </div>
-      )}
+            </List>
+          </DialogContent>
+        </Dialog>
 
-      {/* Role Modal */}
-      {showRoleModal && (
-        <div style={styles.modalOverlay} onClick={() => setShowRoleModal(false)}>
-          <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <div style={styles.modalHeader}>
-              <h3 style={styles.modalTitle}>
-                <FaUserTie style={{ marginRight: "10px" }} />
-                Select Role
-              </h3>
-              <FaTimes
-                style={styles.modalClose}
-                onClick={() => setShowRoleModal(false)}
-              />
-            </div>
-            <div style={styles.modalContent}>
+        {/* Role Modal */}
+        <Dialog open={showRoleModal} onClose={() => setShowRoleModal(false)} maxWidth="sm" fullWidth>
+          <DialogTitle>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Person />
+                <Typography variant="h6">Select Role</Typography>
+              </Box>
+              <IconButton onClick={() => setShowRoleModal(false)}>
+                <Close />
+              </IconButton>
+            </Box>
+          </DialogTitle>
+          <DialogContent>
+            <List>
               {availableRoles.length > 0 ? (
                 <>
                   {availableRoles.map((r, idx) => (
-                    <div
+                    <ListItemButton
                       key={idx}
-                      style={styles.modalItem}
-                      onClick={() => handleRoleSelect(r)}
+                      onClick={() => {
+                        if (r === "Custom Role") {
+                          setIsCustomRole(true);
+                          setCustomRoleInput("");
+                          setShowRoleModal(false);
+                        } else {
+                          setIsCustomRole(false);
+                          setRole(r);
+                          setShowRoleModal(false);
+                        }
+                      }}
+                      sx={{ borderRadius: 2, mb: 1 }}
                     >
-                      {r}
-                    </div>
+                      <ListItemText primary={r} />
+                    </ListItemButton>
                   ))}
-                  <div
-                    style={styles.modalItemCustom}
-                    onClick={() => handleRoleSelect("Custom Role")}
+                  <ListItemButton
+                    onClick={() => {
+                      setIsCustomRole(true);
+                      setCustomRoleInput("");
+                      setShowRoleModal(false);
+                    }}
+                    sx={{ borderRadius: 2, bgcolor: '#f7fafc', fontWeight: 600 }}
                   >
-                    <FaEdit style={{ marginRight: "8px" }} />
-                    Enter Custom Role
-                  </div>
+                    <Edit sx={{ mr: 1 }} />
+                    <ListItemText primary="Enter Custom Role" />
+                  </ListItemButton>
                 </>
               ) : (
-                <div
-                  style={styles.modalItemCustom}
-                  onClick={() => handleRoleSelect("Custom Role")}
+                <ListItemButton
+                  onClick={() => {
+                    setIsCustomRole(true);
+                    setCustomRoleInput("");
+                    setShowRoleModal(false);
+                  }}
+                  sx={{ borderRadius: 2, bgcolor: '#f7fafc', fontWeight: 600 }}
                 >
-                  <FaEdit style={{ marginRight: "8px" }} />
-                  Enter Custom Role
-                </div>
+                  <Edit sx={{ mr: 1 }} />
+                  <ListItemText primary="Enter Custom Role" />
+                </ListItemButton>
               )}
-            </div>
-          </div>
-        </div>
-      )}
+            </List>
+          </DialogContent>
+        </Dialog>
 
-      {/* Custom Company Input Modal */}
-      {isCustomCompany && (
-        <div style={styles.modalOverlay} onClick={() => setIsCustomCompany(false)}>
-          <div style={styles.modalSmall} onClick={(e) => e.stopPropagation()}>
-            <div style={styles.modalHeader}>
-              <h3 style={styles.modalTitle}>
-                <FaBuilding style={{ marginRight: "10px" }} />
-                Enter Custom Company
-              </h3>
-              <FaTimes
-                style={styles.modalClose}
-                onClick={() => setIsCustomCompany(false)}
-              />
-            </div>
-            <div style={styles.modalContent}>
-              <input
-                style={styles.modalInput}
-                type="text"
-                placeholder="Enter company name"
-                value={customCompanyInput}
-                onChange={(e) => setCustomCompanyInput(e.target.value)}
-                autoFocus
-              />
-              <button
-                style={styles.modalSubmitBtn}
-                onClick={handleCustomCompanySubmit}
-              >
-                Submit
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+        {/* Custom Company Input */}
+        <Dialog open={isCustomCompany} onClose={() => setIsCustomCompany(false)} maxWidth="xs" fullWidth>
+          <DialogTitle>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography variant="h6">Enter Custom Company</Typography>
+              <IconButton onClick={() => setIsCustomCompany(false)}>
+                <Close />
+              </IconButton>
+            </Box>
+          </DialogTitle>
+          <DialogContent>
+            <TextField
+              fullWidth
+              label="Company Name"
+              placeholder="Enter company name"
+              value={customCompanyInput}
+              onChange={(e) => setCustomCompanyInput(e.target.value)}
+              autoFocus
+              sx={{ mb: 2 }}
+            />
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={() => {
+                if (customCompanyInput.trim()) {
+                  setCompany(customCompanyInput.trim());
+                  setAvailableRoles([]);
+                  setRole("");
+                  setIsCustomCompany(false);
+                }
+              }}
+            >
+              Submit
+            </Button>
+          </DialogContent>
+        </Dialog>
 
-      {/* Custom Role Input Modal */}
-      {isCustomRole && (
-        <div style={styles.modalOverlay} onClick={() => setIsCustomRole(false)}>
-          <div style={styles.modalSmall} onClick={(e) => e.stopPropagation()}>
-            <div style={styles.modalHeader}>
-              <h3 style={styles.modalTitle}>
-                <FaUserTie style={{ marginRight: "10px" }} />
-                Enter Custom Role
-              </h3>
-              <FaTimes
-                style={styles.modalClose}
-                onClick={() => setIsCustomRole(false)}
-              />
-            </div>
-            <div style={styles.modalContent}>
-              <input
-                style={styles.modalInput}
-                type="text"
-                placeholder="Enter role name"
-                value={customRoleInput}
-                onChange={(e) => setCustomRoleInput(e.target.value)}
-                autoFocus
-              />
-              <button
-                style={styles.modalSubmitBtn}
-                onClick={handleCustomRoleSubmit}
-              >
-                Submit
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+        {/* Custom Role Input */}
+        <Dialog open={isCustomRole} onClose={() => setIsCustomRole(false)} maxWidth="xs" fullWidth>
+          <DialogTitle>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography variant="h6">Enter Custom Role</Typography>
+              <IconButton onClick={() => setIsCustomRole(false)}>
+                <Close />
+              </IconButton>
+            </Box>
+          </DialogTitle>
+          <DialogContent>
+            <TextField
+              fullWidth
+              label="Role Name"
+              placeholder="Enter role name"
+              value={customRoleInput}
+              onChange={(e) => setCustomRoleInput(e.target.value)}
+              autoFocus
+              sx={{ mb: 2 }}
+            />
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={() => {
+                if (customRoleInput.trim()) {
+                  setRole(customRoleInput.trim());
+                  setIsCustomRole(false);
+                }
+              }}
+            >
+              Submit
+            </Button>
+          </DialogContent>
+        </Dialog>
+      </Container>
+    </Box>
   );
 };
-
-const styles = {
-  container: {
-    minHeight: "calc(100vh - 60px)",
-    background: "#f0f4f8",
-    padding: "30px 20px",
-  },
-  card: {
-    background: "#ffffff",
-    borderRadius: "16px",
-    padding: "40px 30px",
-    maxWidth: "1000px",
-    margin: "0 auto",
-    boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
-    border: "1px solid #e2e8f0",
-  },
-  header: {
-    textAlign: "center",
-    marginBottom: "30px",
-  },
-  headerIcon: {
-    fontSize: "40px",
-    color: "#4a5568",
-    marginBottom: "10px",
-  },
-  heading: {
-    fontSize: "32px",
-    fontWeight: "700",
-    color: "#2d3748",
-    marginBottom: "8px",
-  },
-  subtitle: {
-    fontSize: "16px",
-    color: "#718096",
-  },
-  formSection: {
-    marginBottom: "30px",
-    padding: "20px",
-    background: "#f7fafc",
-    borderRadius: "12px",
-  },
-  inputRow: {
-    display: "flex",
-    gap: "20px",
-    marginBottom: "20px",
-    flexWrap: "wrap",
-  },
-  inputGroup: {
-    flex: 1,
-    minWidth: "250px",
-  },
-  selectTrigger: {
-    width: "100%",
-    padding: "12px 16px",
-    fontSize: "15px",
-    border: "2px solid #e2e8f0",
-    borderRadius: "8px",
-    background: "#ffffff",
-    cursor: "pointer",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    boxSizing: "border-box",
-  },
-  selectDisabled: {
-    background: "#f7fafc",
-    cursor: "not-allowed",
-    opacity: 0.6,
-  },
-  selectedText: {
-    color: "#2d3748",
-    fontWeight: "500",
-  },
-  placeholderText: {
-    color: "#a0aec0",
-  },
-  selectIcon: {
-    fontSize: "14px",
-    color: "#4a5568",
-  },
-  btnFetch: {
-    width: "100%",
-    padding: "15px",
-    background: "#4a5568",
-    color: "#fff",
-    border: "none",
-    borderRadius: "10px",
-    fontSize: "16px",
-    fontWeight: "700",
-    cursor: "pointer",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "10px",
-    boxShadow: "0 4px 12px rgba(74, 85, 104, 0.3)",
-    transition: "all 0.3s ease",
-  },
-  btnDisabled: {
-    opacity: 0.6,
-    cursor: "not-allowed",
-  },
-  btnIcon: {
-    fontSize: "18px",
-  },
-  spinner: {
-    fontSize: "18px",
-    animation: "spin 1s linear infinite",
-  },
-  error: {
-    padding: "15px",
-    background: "#fed7d7",
-    color: "#742a2a",
-    borderRadius: "8px",
-    marginBottom: "20px",
-    textAlign: "center",
-    fontWeight: "600",
-  },
-  modalOverlay: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    background: "rgba(0, 0, 0, 0.5)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 2000,
-    animation: "fadeIn 0.2s ease",
-  },
-  modal: {
-    background: "#ffffff",
-    borderRadius: "16px",
-    width: "90%",
-    maxWidth: "500px",
-    maxHeight: "70vh",
-    boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
-    animation: "slideUp 0.3s ease",
-  },
-  modalSmall: {
-    background: "#ffffff",
-    borderRadius: "16px",
-    width: "90%",
-    maxWidth: "400px",
-    boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
-    animation: "slideUp 0.3s ease",
-  },
-  modalHeader: {
-    padding: "20px 25px",
-    borderBottom: "2px solid #e2e8f0",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: "20px",
-    fontWeight: "700",
-    color: "#2d3748",
-    display: "flex",
-    alignItems: "center",
-    margin: 0,
-  },
-  modalClose: {
-    fontSize: "20px",
-    color: "#718096",
-    cursor: "pointer",
-    transition: "color 0.3s ease",
-  },
-  modalContent: {
-    padding: "20px 25px",
-    maxHeight: "calc(70vh - 80px)",
-    overflowY: "auto",
-  },
-  modalItem: {
-    padding: "14px 18px",
-    fontSize: "15px",
-    color: "#2d3748",
-    cursor: "pointer",
-    borderRadius: "8px",
-    marginBottom: "8px",
-    background: "#f7fafc",
-  },
-  modalItemCustom: {
-    padding: "14px 18px",
-    fontSize: "15px",
-    color: "#4a5568",
-    cursor: "pointer",
-    borderRadius: "8px",
-    marginTop: "12px",
-    background: "#e2e8f0",
-    fontWeight: "600",
-    display: "flex",
-    alignItems: "center",
-  },
-  modalInput: {
-    width: "100%",
-    padding: "12px 16px",
-    fontSize: "15px",
-    border: "2px solid #e2e8f0",
-    borderRadius: "8px",
-    outline: "none",
-    marginBottom: "15px",
-    boxSizing: "border-box",
-    background: "#ffffff",
-    color: "#000000",
-  },
-  modalSubmitBtn: {
-    width: "100%",
-    padding: "12px",
-    background: "#4a5568",
-    color: "#fff",
-    border: "none",
-    borderRadius: "8px",
-    fontSize: "15px",
-    fontWeight: "700",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-  },
-  questionsContainer: {
-    marginTop: "30px",
-  },
-  questionsHeaderRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "20px",
-    flexWrap: "wrap",
-    gap: "15px",
-  },
-  questionsHeading: {
-    fontSize: "24px",
-    fontWeight: "700",
-    color: "#2d3748",
-    margin: 0,
-  },
-  filterContainer: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    flexWrap: "wrap",
-  },
-  filterIcon: {
-    fontSize: "18px",
-    color: "#4a5568",
-  },
-  filterBtn: {
-    padding: "8px 16px",
-    background: "#f7fafc",
-    color: "#4a5568",
-    border: "2px solid #e2e8f0",
-    borderRadius: "8px",
-    fontSize: "14px",
-    fontWeight: "600",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-  },
-  filterBtnActiveEasy: {
-    background: "#48bb78",
-    color: "#fff",
-    borderColor: "#48bb78",
-  },
-  filterBtnActiveMedium: {
-    background: "#ed8936",
-    color: "#fff",
-    borderColor: "#ed8936",
-  },
-  filterBtnActiveHard: {
-    background: "#f56565",
-    color: "#fff",
-    borderColor: "#f56565",
-  },
-  noResults: {
-    textAlign: "center",
-    padding: "40px 20px",
-    background: "#f7fafc",
-    borderRadius: "12px",
-    border: "2px dashed #e2e8f0",
-  },
-  noResultsIcon: {
-    fontSize: "48px",
-    color: "#cbd5e0",
-    marginBottom: "15px",
-  },
-  noResultsText: {
-    fontSize: "16px",
-    color: "#718096",
-    fontWeight: "500",
-  },
-  questionCard: {
-    background: "#f7fafc",
-    border: "2px solid #e2e8f0",
-    borderRadius: "12px",
-    marginBottom: "15px",
-    overflow: "hidden",
-    transition: "all 0.3s ease",
-  },
-  questionHeader: {
-    padding: "20px",
-    cursor: "pointer",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    transition: "background 0.3s ease",
-  },
-  questionTitle: {
-    display: "flex",
-    alignItems: "flex-start",
-    gap: "15px",
-    flex: 1,
-  },
-  questionNumber: {
-    background: "#4a5568",
-    color: "#fff",
-    padding: "6px 12px",
-    borderRadius: "6px",
-    fontWeight: "700",
-    fontSize: "14px",
-    flexShrink: 0,
-  },
-  questionText: {
-    fontSize: "16px",
-    fontWeight: "600",
-    color: "#2d3748",
-    flex: 1,
-    wordBreak: "break-word",
-  },
-  questionMeta: {
-    display: "flex",
-    alignItems: "center",
-    gap: "15px",
-    flexShrink: 0,
-  },
-  difficulty: {
-    padding: "6px 12px",
-    borderRadius: "6px",
-    fontSize: "13px",
-    fontWeight: "700",
-    textTransform: "uppercase",
-  },
-  chevron: {
-    fontSize: "18px",
-    color: "#4a5568",
-  },
-  questionDetails: {
-    padding: "0 20px 20px 20px",
-    borderTop: "1px solid #e2e8f0",
-  },
-  detailSection: {
-    marginTop: "20px",
-  },
-  detailLabel: {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    fontSize: "14px",
-    fontWeight: "700",
-    color: "#4a5568",
-    marginBottom: "8px",
-  },
-  detailIcon: {
-    fontSize: "16px",
-  },
-  detailText: {
-    fontSize: "15px",
-    color: "#2d3748",
-    lineHeight: "1.6",
-  },
-};
-
-// Add media query styles
-if (typeof window !== 'undefined') {
-  const style = document.createElement('style');
-  style.textContent = `
-    @media (max-width: 768px) {
-      .interview-card {
-        padding: 30px 20px !important;
-      }
-      .interview-heading {
-        font-size: 28px !important;
-      }
-      .interview-header-icon {
-        font-size: 35px !important;
-      }
-      .interview-input-row {
-        flex-direction: column !important;
-        gap: 15px !important;
-      }
-      .interview-input-group {
-        min-width: 100% !important;
-      }
-      .interview-questions-header {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-      }
-      .interview-filter-container {
-        width: 100%;
-        justify-content: flex-start !important;
-      }
-      .interview-question-header {
-        flex-direction: column !important;
-        gap: 10px !important;
-        align-items: flex-start !important;
-      }
-      .interview-question-meta {
-        align-self: flex-end;
-      }
-    }
-    @media (max-width: 480px) {
-      .interview-container {
-        padding: 20px 10px !important;
-      }
-      .interview-card {
-        padding: 25px 15px !important;
-        border-radius: 12px !important;
-      }
-      .interview-heading {
-        font-size: 24px !important;
-      }
-      .interview-subtitle {
-        font-size: 14px !important;
-      }
-      .interview-header-icon {
-        font-size: 30px !important;
-      }
-      .interview-form-section {
-        padding: 15px !important;
-      }
-      .interview-questions-heading {
-        font-size: 20px !important;
-      }
-      .interview-filter-btn {
-        padding: 6px 12px !important;
-        font-size: 12px !important;
-      }
-      .interview-filter-icon {
-        font-size: 14px !important;
-      }
-      .interview-question-text {
-        font-size: 14px !important;
-      }
-      .interview-question-number {
-        font-size: 12px !important;
-        padding: 4px 8px !important;
-      }
-      .interview-difficulty {
-        font-size: 11px !important;
-        padding: 4px 8px !important;
-      }
-      .interview-modal {
-        width: 95% !important;
-        max-width: 95% !important;
-      }
-      .interview-modal-small {
-        width: 95% !important;
-        max-width: 95% !important;
-      }
-    }
-  `;
-  document.head.appendChild(style);
-}
 
 export default Interview;

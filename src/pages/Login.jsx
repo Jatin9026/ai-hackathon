@@ -3,8 +3,29 @@ import Webcam from "react-webcam";
 import axios from "axios";
 import { API_BASE_URL } from "../api";
 import { useNavigate } from "react-router-dom";
-import { FaSignInAlt, FaCamera, FaUpload, FaRedo, FaCheckCircle, FaExclamationTriangle, FaTimesCircle } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
+import {
+  Box,
+  Container,
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+  Stack,
+  Alert,
+  CircularProgress,
+  Fade,
+} from "@mui/material";
+import {
+  Login as LoginIcon,
+  CameraAlt,
+  Upload,
+  Refresh,
+  CheckCircle,
+  Warning,
+  Error as ErrorIcon,
+} from "@mui/icons-material";
 
 const Login = () => {
   const webcamRef = useRef(null);
@@ -17,6 +38,7 @@ const Login = () => {
   const [status, setStatus] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showWebcam, setShowWebcam] = useState(true);
+  const [statusType, setStatusType] = useState("info");
 
   const capturePhoto = () => {
     const imageSrc = webcamRef.current.getScreenshot();
@@ -39,10 +61,14 @@ const Login = () => {
 
   const verifyFace = async () => {
     if (!userId.trim()) {
-      return setStatus("⚠️ Please enter your User ID");
+      setStatus("Please enter your User ID");
+      setStatusType("warning");
+      return;
     }
     if (!capturedImage) {
-      return setStatus("⚠️ Please capture or upload an image first");
+      setStatus("Please capture or upload an image first");
+      setStatusType("warning");
+      return;
     }
 
     const base64Data = capturedImage.split(",")[1];
@@ -56,363 +82,171 @@ const Login = () => {
 
       if (res.data.match === true) {
         login(userId);
-        setStatus("✅ ACCESS GRANTED - Redirecting...");
+        setStatus("ACCESS GRANTED - Redirecting...");
+        setStatusType("success");
         setTimeout(() => {
           navigate("/interview");
         }, 1500);
       } else {
-        setStatus("❌ ACCESS DENIED - Face not recognized");
+        setStatus("ACCESS DENIED - Face not recognized");
+        setStatusType("error");
         setTimeout(() => {
           setCapturedImage(null);
           setShowWebcam(true);
         }, 2000);
       }
     } catch (err) {
-      setStatus("❌ Error: " + err.message);
+      setStatus("Error: " + err.message);
+      setStatusType("error");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div style={styles.container} className="login-container">
-      <div style={styles.card} className="login-card">
-        <div style={styles.headerIcon} className="login-header-icon">
-          <FaSignInAlt />
-        </div>
-        <h2 style={styles.heading} className="login-heading">Login</h2>
-        <p style={styles.subtitle} className="login-subtitle">Verify your identity with facial recognition</p>
+    <Box sx={{ minHeight: 'calc(100vh - 64px)', bgcolor: '#000000', py: 6 }}>
+      <Container maxWidth="sm">
+        <Fade in timeout={500}>
+          <Card elevation={0}>
+            <CardContent sx={{ p: { xs: 3, md: 5 } }}>
+              <Box sx={{ textAlign: 'center', mb: 4 }}>
+                <Box sx={{ width: 80, height: 80, borderRadius: 5, background: '#1a1a1a', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+                  <LoginIcon sx={{ fontSize: 40, color: '#ffffff' }} />
+                </Box>
+                <Typography variant="h2" gutterBottom>
+                  Login
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Verify your identity with facial recognition
+                </Typography>
+              </Box>
 
-        <div style={styles.inputGroup}>
-          <label style={styles.label}>User ID</label>
-          <input
-            style={styles.input}
-            type="text"
-            placeholder="Enter your user ID"
-            value={userId}
-            onChange={(e) => setUserId(e.target.value)}
-          />
-        </div>
-
-        <div style={styles.imageSection}>
-          <div style={styles.webcamContainer} className="login-webcam-container">
-            {showWebcam && !capturedImage && (
-              <Webcam
-                audio={false}
-                ref={webcamRef}
-                screenshotFormat="image/jpeg"
-                style={styles.webcam}
+              <TextField
+                fullWidth
+                label="User ID"
+                placeholder="Enter your user ID"
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
+                sx={{ mb: 3 }}
               />
-            )}
-            {capturedImage && (
-              <img
-                src={capturedImage}
-                alt="Captured"
-                style={styles.preview}
-              />
-            )}
-          </div>
 
-          <div style={styles.buttonGroup} className="login-button-group">
-            <button
-              style={styles.btnCapture}
-              onClick={capturePhoto}
-              disabled={!showWebcam || isLoading}
-            >
-              <FaCamera style={styles.btnIcon} />
-              Capture Photo
-            </button>
+              <Box
+                sx={{
+                  width: '100%',
+                  height: 320,
+                  borderRadius: 4,
+                  overflow: 'hidden',
+                  mb: 2,
+                  border: '2px solid #1a1a1a',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: '#000000',
+                }}
+              >
+                {showWebcam && !capturedImage ? (
+                  <Webcam
+                    audio={false}
+                    ref={webcamRef}
+                    screenshotFormat="image/jpeg"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : capturedImage ? (
+                  <img
+                    src={capturedImage}
+                    alt="Captured"
+                    style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                  />
+                ) : null}
+              </Box>
 
-            <button
-              style={styles.btnUpload}
-              onClick={() => fileInputRef.current.click()}
-              disabled={isLoading}
-            >
-              <FaUpload style={styles.btnIcon} />
-              Upload Image
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              style={{ display: "none" }}
-              onChange={handleFileUpload}
-            />
-          </div>
+              <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="secondary"
+                  startIcon={<CameraAlt />}
+                  onClick={capturePhoto}
+                  disabled={!showWebcam || isLoading}
+                >
+                  Capture Photo
+                </Button>
 
-          {capturedImage && (
-            <button
-              style={styles.btnRetake}
-              onClick={() => {
-                setCapturedImage(null);
-                setShowWebcam(true);
-              }}
-            >
-              <FaRedo style={{ marginRight: "8px" }} />
-              Retake
-            </button>
-          )}
-        </div>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="info"
+                  startIcon={<Upload />}
+                  onClick={() => fileInputRef.current.click()}
+                  disabled={isLoading}
+                >
+                  Upload Image
+                </Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={handleFileUpload}
+                />
+              </Stack>
 
-        <button
-          style={{
-            ...styles.btnLogin,
-            ...(isLoading ? styles.btnDisabled : {}),
-          }}
-          onClick={verifyFace}
-          disabled={isLoading}
-        >
-          {isLoading ? "Verifying..." : "Login"}
-        </button>
+              {capturedImage && (
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  startIcon={<Refresh />}
+                  onClick={() => {
+                    setCapturedImage(null);
+                    setShowWebcam(true);
+                  }}
+                  sx={{ mb: 3 }}
+                >
+                  Retake
+                </Button>
+              )}
 
-        {status && (
-          <div
-            style={{
-              ...styles.status,
-              ...(status.includes("✅") ? styles.statusSuccess : {}),
-              ...(status.includes("❌") || status.includes("⚠️")
-                ? styles.statusError
-                : {}),
-            }}
-          >
-            {status.includes("✅") && <FaCheckCircle style={{ marginRight: "8px" }} />}
-            {status.includes("⚠️") && <FaExclamationTriangle style={{ marginRight: "8px" }} />}
-            {status.includes("❌") && <FaTimesCircle style={{ marginRight: "8px" }} />}
-            {status.replace(/[✅❌⚠️]/g, "").trim()}
-          </div>
-        )}
-      </div>
-    </div>
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={verifyFace}
+                disabled={isLoading}
+                sx={{ mb: 2, py: 1.5 }}
+              >
+                {isLoading ? (
+                  <>
+                    <CircularProgress size={20} sx={{ mr: 1, color: 'white' }} />
+                    Verifying...
+                  </>
+                ) : (
+                  "Login"
+                )}
+              </Button>
+
+              {status && (
+                <Alert
+                  severity={statusType}
+                  icon={
+                    statusType === "success" ? (
+                      <CheckCircle />
+                    ) : statusType === "warning" ? (
+                      <Warning />
+                    ) : (
+                      <ErrorIcon />
+                    )
+                  }
+                >
+                  {status}
+                </Alert>
+              )}
+            </CardContent>
+          </Card>
+        </Fade>
+      </Container>
+    </Box>
   );
 };
-
-const styles = {
-  container: {
-    minHeight: "calc(100vh - 60px)",
-    background: "#f0f4f8",
-    padding: "0",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-  },
-  card: {
-    background: "#ffffff",
-    borderRadius: "16px",
-    padding: "40px 30px",
-    maxWidth: "600px",
-    width: "90%",
-    boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
-    border: "1px solid #e2e8f0",
-  },
-  headerIcon: {
-    fontSize: "40px",
-    color: "#4a5568",
-    textAlign: "center",
-    marginBottom: "15px",
-  },
-  heading: {
-    fontSize: "28px",
-    fontWeight: "700",
-    color: "#2d3748",
-    marginBottom: "8px",
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: "14px",
-    color: "#718096",
-    marginBottom: "30px",
-    textAlign: "center",
-  },
-  inputGroup: {
-    marginBottom: "25px",
-  },
-  label: {
-    display: "block",
-    fontSize: "14px",
-    fontWeight: "600",
-    color: "#4a5568",
-    marginBottom: "8px",
-  },
-  input: {
-    width: "100%",
-    padding: "12px 16px",
-    fontSize: "15px",
-    border: "2px solid #e2e8f0",
-    borderRadius: "8px",
-    outline: "none",
-    boxSizing: "border-box",
-    background: "#ffffff",
-    color: "#000000",
-  },
-  imageSection: {
-    marginBottom: "25px",
-  },
-  webcamContainer: {
-    width: "100%",
-    height: "300px",
-    background: "#f7fafc",
-    borderRadius: "12px",
-    overflow: "hidden",
-    marginBottom: "15px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    border: "2px dashed #cbd5e0",
-  },
-  webcam: {
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
-    borderRadius: "10px",
-  },
-  preview: {
-    maxWidth: "100%",
-    maxHeight: "100%",
-    borderRadius: "10px",
-  },
-  buttonGroup: {
-    display: "flex",
-    gap: "12px",
-    marginBottom: "15px",
-    flexWrap: "wrap",
-  },
-  btnCapture: {
-    flex: 1,
-    minWidth: "120px",
-    padding: "12px 20px",
-    background: "#48bb78",
-    color: "#fff",
-    border: "none",
-    borderRadius: "8px",
-    fontSize: "15px",
-    fontWeight: "600",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "8px",
-  },
-  btnUpload: {
-    flex: 1,
-    minWidth: "120px",
-    padding: "12px 20px",
-    background: "#4299e1",
-    color: "#fff",
-    border: "none",
-    borderRadius: "8px",
-    fontSize: "15px",
-    fontWeight: "600",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "8px",
-  },
-  btnRetake: {
-    width: "100%",
-    padding: "10px",
-    background: "#f7fafc",
-    color: "#4a5568",
-    border: "2px solid #e2e8f0",
-    borderRadius: "8px",
-    fontSize: "14px",
-    fontWeight: "600",
-    cursor: "pointer",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  btnIcon: {
-    fontSize: "16px",
-  },
-  btnLogin: {
-    width: "100%",
-    padding: "15px",
-    background: "#4a5568",
-    color: "#fff",
-    border: "none",
-    borderRadius: "10px",
-    fontSize: "16px",
-    fontWeight: "700",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    marginBottom: "15px",
-    boxShadow: "0 4px 12px rgba(74, 85, 104, 0.3)",
-  },
-  btnDisabled: {
-    opacity: 0.6,
-    cursor: "not-allowed",
-  },
-  status: {
-    padding: "12px",
-    borderRadius: "8px",
-    fontSize: "14px",
-    fontWeight: "600",
-    textAlign: "center",
-    background: "#f7fafc",
-    color: "#4a5568",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  statusSuccess: {
-    background: "#c6f6d5",
-    color: "#22543d",
-  },
-  statusError: {
-    background: "#fed7d7",
-    color: "#742a2a",
-  },
-};
-
-// Add media query styles
-if (typeof window !== 'undefined') {
-  const style = document.createElement('style');
-  style.textContent = `
-    @media (max-width: 768px) {
-      .login-container {
-        padding: 20px 10px !important;
-      }
-      .login-card {
-        padding: 30px 20px !important;
-      }
-      .login-heading {
-        font-size: 24px !important;
-      }
-      .login-webcam-container {
-        height: 250px !important;
-      }
-    }
-    @media (max-width: 480px) {
-      .login-card {
-        padding: 25px 15px !important;
-        width: 95% !important;
-      }
-      .login-heading {
-        font-size: 22px !important;
-      }
-      .login-subtitle {
-        font-size: 13px !important;
-      }
-      .login-header-icon {
-        font-size: 35px !important;
-      }
-      .login-webcam-container {
-        height: 200px !important;
-      }
-      .login-button-group {
-        flex-direction: column !important;
-      }
-      .login-button-group button {
-        width: 100% !important;
-        min-width: 100% !important;
-      }
-    }
-  `;
-  document.head.appendChild(style);
-}
 
 export default Login;
